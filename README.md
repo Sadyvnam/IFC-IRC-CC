@@ -15,10 +15,8 @@ Please find instructions to run the file at the bottom of this file.
 
 ## What This Tool Is
 
-- A rule-based checker for whether IFC exchange data is usable for downstream
-  sustainability assessment workflows
-- A category-based analyzer that groups elements into Building Element Categories
-  (BECs) and evaluates their information readiness
+- A rule-based checker for whether IFC exchange data is usable for downstream sustainability assessment workflows
+- A category-based analyzer that groups elements into Building Element Categories (BECs) and evaluates their information readiness, based on RICS 2.0 WLCA reporting structure
 - A research-oriented diagnostic tool focused on transparency and traceability
 
 ## What This Tool Is Not
@@ -61,54 +59,29 @@ Interpretation guidance:
 
 ## Active Pipeline
 
-Primary publication-facing pipeline:
-
 ```text
 App.py -> category_XX() -> Excel export
 ```
 
-Legacy or exploratory pipeline:
-
-```text
-src/process_ifc.py -> flat-list checks -> mk_result()
-```
-
-The legacy pipeline is not the main reporting path for the current Excel output.
+Other legacy pipelines is not the main reporting path for the current Excel output.
 
 Note:
 
 - The exported Excel report includes only categories wired in `App.py`
-- BEC `1.2` retaining-wall/basement-scope logic is intentionally not exported
-  through standalone `c12.py` yet
-- Deterministic `BASESLAB` rows for BEC `1.2` are exported through `category_22()`
-  slab routing
-- Top-level BEC `2.7` internal-wall reporting is exported through `category_21()`
-  wall routing, not through standalone `c27.py`
+- BEC `1.2` retaining-wall/basement-scope logic is intentionally not exported through standalone `c12.py` yet
+- Deterministic `BASESLAB` rows for BEC `1.2` are exported through `category_22()` slab routing
+- Top-level BEC `2.7` internal-wall reporting is exported through `category_21()` wall routing, not through standalone `c27.py`
 - Active BEC `5.5` numbering is defined by `category_55()` in `src/wlca_functions/c55.py`
 
-Current category-boundary note:
+Current category-boundary:
 
 - BEC `1.2` is not yet exported as a standalone `c12.py` category in the main pipeline
-- Its deterministic lowest-slab handling is currently absorbed through existing slab
-  routing, especially via `c22.py` when `IfcSlab.PredefinedType == BASESLAB`
-- Active BEC `1.2` output from `c22.py` keeps the RICS category name
-  "Basement retaining walls and lowest slab" but includes a category-level info issue
-  noting that retaining-wall detection is not currently assessed
-- Standalone BEC `1.2` reporting is intended for a later phase once the
-  semi-deterministic retaining-wall and basement-scope logic is mature enough to be
-  methodologically defensible
-- Top-level BEC `2.7` rows, overview, and indicators are produced from
-  `src/wlca_functions/c21.py` when wall routing identifies internal walls
-- `src/wlca_functions/c27.py` exists as non-authoritative exploratory/future logic,
-  including `2.7.1` / `2.7.2` ideas that are not currently split in the active report
-- Active `2.7` routing avoids semantic text-token interpretation and relies on
-  deterministic IFC signals such as `LoadBearing`, `IsExternal`, and partition-style
-  `PredefinedType`
-- Exported BEC `5.5` reporting currently comes from `src/wlca_functions/c55.py`
-  via `category_55()`
-- Transport equipment is handled deterministically inside `category_55()` using
-  `IfcTransportElement.PredefinedType`; the former alternate `c552.py` module was
-  removed to keep one source of truth
+- Its deterministic lowest-slab handling is currently absorbed through existing slab routing, especially via `c22.py` when `IfcSlab.PredefinedType == BASESLAB`
+- Active BEC `1.2` output from `c22.py` keeps the RICS category name "Basement retaining walls and lowest slab" but includes a category-level info issue noting that retaining-wall detection is not currently assessed
+- Top-level BEC `2.7` rows, overview, and indicators are produced from `src/wlca_functions/c21.py` when wall routing identifies internal walls `src/wlca_functions/c27.py` exists as non-authoritative exploratory/future logic, including `2.7.1` / `2.7.2` ideas that are not currently split in the active report
+- Active `2.7` routing avoids semantic text-token interpretation and relies on deterministic IFC signals such as `LoadBearing`, `IsExternal`, and partition-style `PredefinedType`
+- Exported BEC `5.5` reporting currently comes from `src/wlca_functions/c55.py` via `category_55()`
+- Transport equipment is handled deterministically inside `category_55()` using `IfcTransportElement.PredefinedType`
 
 ## Typical IFC Signals Used
 
@@ -124,19 +97,13 @@ The checker relies on a mix of:
 - Environmental property sets
 - Manufacturer and service-life metadata
 
-These are not consistently present across exported IFC files, so absence is common and
-should be interpreted carefully.
-
-## Known Modeling Constraints
-
-Recurring real-world IFC limitations include:
+These are not consistently present across exported IFC files, so absence is common and should be interpreted carefully. Recurring IFC limitations include:
 
 - Generic proxies such as `IfcBuildingElementProxy`
-- Missing or weak `PredefinedType`
-- Sparse classification links
+- Missing or weak `PredefinedType`, classification links
 - Incomplete or inconsistent quantity sets
 - Unrealistic solid modeling that can distort derived quantities
-- Double-counting risks across coverings, hosts, and decompositions
+- Double-counting risks across coverings, hosts and decompositions
 - Weak or generic material naming
 - Document links that exist but are unusable
 - Sparse explicit circularity or disassembly information
