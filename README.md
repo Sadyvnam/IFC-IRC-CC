@@ -1,23 +1,19 @@
-# IFC Model Quality and WLCA Analyzer
+# IFC Model Quality Analyzer
 
 Diagnostic IFC exchange-readiness assessment for sustainability-oriented workflows.
 
-This repository evaluates whether an exchanged IFC model contains sufficiently usable
-information for:
+This repository evaluates the extent exchanged IFC model contains usable information for:
 
-1. Whole Life Carbon Assessment (WLCA) input preparation
-2. Selected circularity-related checks
-3. Environmental traceability and linkability review
-
-It is an IFC information quality and readiness analyzer, not a carbon calculator.
+1. Whole Life Carbon Assessment (WLCA) inputs
+2. Circularity-related checks/ decisionmaking
 
 Please find instructions to run the file at the bottom of this file.
 
 ## What This Tool Is
 
-- A rule-based checker for whether IFC exchange data is usable for downstream sustainability assessment workflows
-- A category-based analyzer that groups elements into Building Element Categories (BECs) and evaluates their information readiness, based on RICS 2.0 WLCA reporting structure
-- A research-oriented diagnostic tool focused on transparency and traceability
+- A rule-based checker for whether IFC exchange data is usable for the above purpose
+- A category-based analyzer that groups elements into Building Element Categories (BECs) and evaluates their information readiness, which are from RICS 2.0 WLCA
+- A research-oriented diagnostic tool
 
 ## What This Tool Is Not
 
@@ -32,12 +28,12 @@ Please find instructions to run the file at the bottom of this file.
 
 When extending or interpreting this project, preserve these assumptions:
 
-- The system evaluates decision-readiness, not absolute model correctness
+- The system evaluates decision-readiness, not correctness
 - The system evaluates exchanged IFC data, not native authoring-tool fidelity
 - Lower assessment levels are intended to be more deterministic
-- Higher assessment levels are more limited, partial, and heuristic
+- Higher assessment levels are more limited, partial, heuristic
 - Category-specific logic is intentional and should not be flattened without care
-- Outputs should remain traceable rather than opaque
+- Outputs should be traceable
 
 ## Assessment Structure
 
