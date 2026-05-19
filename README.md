@@ -17,23 +17,22 @@ Please find instructions to run the file at the bottom of this file.
 
 ## What This Tool Is Not
 
-- Not a full LCA engine
+- Not a LCA engine
 - Not a direct EN 15978 calculator
 - Not a generic BIM QA/QC suite
 - Not a clash detection tool
 - Not an AI auto-correction system
 - Not a circularity score calculator
 
-## Core Positioning
+## Philosophy
 
 When extending or interpreting this project, preserve these assumptions:
 
 - The system evaluates decision-readiness, not correctness
 - The system evaluates exchanged IFC data, not native authoring-tool fidelity
-- Lower assessment levels are intended to be more deterministic
-- Higher assessment levels are more limited, partial, heuristic
+- Assessment levels are maximally deterministic.
+- Any free text field interpretation should be transparent
 - Category-specific logic is intentional and should not be flattened without care
-- Outputs should be traceable
 
 ## Assessment Structure
 
@@ -116,11 +115,9 @@ Outputs are intended to support:
 - Category-level readiness interpretation
 - Future research extension
 
-The tool commonly produces structured Excel outputs containing category
-summaries, issue rows, indicators, and element-level extracted data.
+The tool commonly produces structured Excel outputs containing sheets of summaries, issues, indicators, grouped element rows.
 
-Scores, where present, should be read as information-readiness indicators. They do not
-represent actual carbon impact or guarantee valid downstream WLCA.
+Scores, where present, should be read as information-readiness indicators. They do not represent actual carbon impact or guarantee valid downstream WLCA.
 
 ## Running the Tool
 
