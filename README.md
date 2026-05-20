@@ -73,6 +73,7 @@ Current category-boundary:
 - BEC `1.2` is not yet exported as a standalone `c12.py` category in the main pipeline
 - Its deterministic lowest-slab handling is currently absorbed through existing slab routing, especially via `c22.py` when `IfcSlab.PredefinedType == BASESLAB`
 - Active BEC `1.2` output from `c22.py` keeps the RICS category name "Basement retaining walls and lowest slab" but includes a category-level info issue noting that retaining-wall detection is not currently assessed
+- BEC `2.3` roof structure rows are produced from `IfcSlab.PredefinedType == ROOF` and direct `IfcRoof` elements
 - Top-level BEC `2.7` rows, overview, and indicators are produced from `src/wlca_functions/c21.py` when wall routing identifies internal walls `src/wlca_functions/c27.py` exists as non-authoritative exploratory/future logic, including `2.7.1` / `2.7.2` ideas that are not currently split in the active report
 - Active `2.7` routing avoids semantic text-token interpretation and relies on deterministic IFC signals such as `LoadBearing`, `IsExternal`, and partition-style `PredefinedType`
 - Exported BEC `5.5` reporting currently comes from `src/wlca_functions/c55.py` via `category_55()`

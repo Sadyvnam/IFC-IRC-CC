@@ -41,7 +41,7 @@ def category_22(ad: CoreType) -> CategoryReturn:
     # Recommended: store multiple overview rows
     out.overviews = []  # add this field to CategoryReturn if possible
 
-    slabs = ad.by_types(["IfcSlab"])
+    roof_floor_elements = ad.by_types(["IfcSlab", "IfcRoof"])
 
     agg: dict[tuple, CategoryRow] = {}
 
@@ -62,18 +62,20 @@ def category_22(ad: CoreType) -> CategoryReturn:
             "issues": 0, "l4a": 0.0,
         },
     }
-    # quantities relevant for slabs: area + volume are typical
+    # quantities relevant for slabs/roofs: area + volume are typical
     relevant_qto_types = {"IfcQuantityArea", "IfcQuantityVolume", "IfcQuantityLength"}
     scoped_by_category:dict[str, list[entity_instance]] = {"1.2": [], "2.2": [], "2.3": []}
 
-    for slab in slabs:
-        if slab.id() in ad.parsedElIds:
+    for element in roof_floor_elements:
+        if element.id() in ad.parsedElIds:
             continue
 
-        pdt = getattr(slab, "PredefinedType", None)
+        ifc_class = element.is_a()
+        pdt = ad.roof_type(element) if ifc_class == "IfcRoof" else ad.predefined_type(element)
 
-        # --- determine code deterministically ---
-        if pdt == "ROOF":
+        if ifc_class == "IfcRoof":
+            code = "2.3"
+        elif pdt == "ROOF":
             code = "2.3"
         elif pdt in {"FLOOR"}:
             code = "2.2"
@@ -87,43 +89,46 @@ def category_22(ad: CoreType) -> CategoryReturn:
             issue = IssueRow()
             issue.category_code = "2.2"
             issue.category_name = ""
-            issue.ifc_class = slab.is_a()
+            issue.ifc_class = ifc_class
             issue.message = f"Unexpected IfcSlab.PredefinedType={pdt}; treated as 2.2"
             out.issues.append(issue)
             counters["2.2"]["issues"] += 1
 
         # --- QA: missing predefined type ---
-        if (pdt is None) or (pdt == "NOTDEFINED"):
+        if pdt is None:
             issue = IssueRow()
             issue.category_code = code
             issue.category_name = ""
-            issue.ifc_class = slab.is_a()
-            issue.message = "Missing predefined type (IfcSlab.PredefinedType)"
+            issue.ifc_class = ifc_class
+            if ifc_class == "IfcRoof":
+                issue.message = "Missing roof type (IfcRoof.PredefinedType, assigned type PredefinedType, or IfcRoof.ShapeType)"
+            else:
+                issue.message = f"Missing predefined type ({ifc_class}.PredefinedType or assigned type PredefinedType)"
             out.issues.append(issue)
             counters.get(code, counters["2.2"])["issues"] += 1
 
         # --- scoring counters per code ---
-        common = ad.get_element_common_pset(slab)
+        common = ad.get_element_common_pset(element)
 
         score_bucket = counters.get(code)
         if score_bucket is not None:
-            scoped_by_category.setdefault(code, []).append(slab)
+            scoped_by_category.setdefault(code, []).append(element)
             score_bucket["n"] += 1
-            score_bucket["l4a"] += ad.parse_element_EII(slab)["score"]
-            if ad._valid_predefined_type(slab): score_bucket["pdt"] += 1
-            if ad._has_classification_ref(slab): score_bucket["class"] += 1
-            if ad._classification_required_fields_non_null(slab): score_bucket["class_fields"] += 1
-            if ad._has_shape_representation(slab): score_bucket["shape"] += 1
-            if ad._has_relevant_qto(slab, relevant_qto_types): score_bucket["qto"] += 1
+            score_bucket["l4a"] += ad.parse_element_EII(element)["score"]
+            if (ad.roof_type(element) if ifc_class == "IfcRoof" else ad._valid_predefined_type(element)): score_bucket["pdt"] += 1
+            if ad._has_classification_ref(element): score_bucket["class"] += 1
+            if ad._classification_required_fields_non_null(element): score_bucket["class_fields"] += 1
+            if ad._has_shape_representation(element): score_bucket["shape"] += 1
+            if ad._has_relevant_qto(element, relevant_qto_types): score_bucket["qto"] += 1
             if common is not None: score_bucket["common"] += 1
-            if ad._has_material_association(slab): score_bucket["mat"] += 1
-            if ad._has_document_association(slab): score_bucket["doc"] += 1
+            if ad._has_material_association(element): score_bucket["mat"] += 1
+            if ad._has_document_association(element): score_bucket["doc"] += 1
 
         # --- build + aggregate category rows ---
         row = CategoryRow()
         row.category_code = code
         row.category_name = ""
-        row = ad.build_category_row(slab, row)
+        row = ad.build_category_row(element, row)
 
         key = (
             row.category_code,

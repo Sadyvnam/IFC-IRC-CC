@@ -179,6 +179,33 @@ class CoreType:
             if t: return t
         return None
 
+    def predefined_type(self, e:entity_instance) -> Optional[str]:
+        """Return usable occurrence or type-level PredefinedType, if present."""
+        pdt = getattr(e, "PredefinedType", None)
+        if pdt is not None and str(pdt).upper() != "NOTDEFINED":
+            return str(pdt)
+
+        t = self._type_of(e)
+        if t:
+            type_pdt = getattr(t, "PredefinedType", None)
+            if type_pdt is not None and str(type_pdt).upper() != "NOTDEFINED":
+                return str(type_pdt)
+
+        return None
+
+    def roof_type(self, e:entity_instance) -> Optional[str]:
+        """Return usable roof type evidence, including legacy IfcRoof.ShapeType."""
+        pdt = self.predefined_type(e)
+        if pdt is not None:
+            return pdt
+
+        if hasattr(e, "is_a") and e.is_a("IfcRoof"):
+            shape_type = getattr(e, "ShapeType", None)
+            if shape_type is not None and str(shape_type).upper() != "NOTDEFINED":
+                return str(shape_type)
+
+        return None
+
     def _class_refs(self, e:entity_instance) -> List[Any]:
         """Return list of IfcClassificationReference associated to element or its type."""
         out = []
@@ -1252,9 +1279,7 @@ class CoreType:
         return any(rel and rel.is_a("IfcRelAssociatesDocument") for rel in rels)
 
     def _valid_predefined_type(self,e:entity_instance,*args) -> bool:
-        pdt = getattr(e, "PredefinedType", None)
-        # deterministic enum presence
-        return pdt is not None and pdt != "NOTDEFINED"
+        return self.predefined_type(e) is not None
 
 
     # def qto_area(self, e:entity_instance) -> Optional[float]:

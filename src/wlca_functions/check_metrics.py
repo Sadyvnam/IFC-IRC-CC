@@ -81,7 +81,7 @@ CHECK_DEFINITIONS: dict[str, dict[str, str]] = {
     },
     "l1_predefined_type": {
         "what": "Checks whether the IFC predefined type is available and usable.",
-        "evidence": "A populated PredefinedType that is not NOTDEFINED where the attribute exists.",
+        "evidence": "A populated occurrence or assigned type-object PredefinedType that is not NOTDEFINED where the attribute exists. For IfcRoof, legacy ShapeType is also accepted.",
         "not_evidence": "Object names or descriptions used as a substitute for PredefinedType.",
     },
     "l1_type_object": {
@@ -521,7 +521,13 @@ def _weighted_score(metrics: dict[str, CheckMetric], weights: dict[str, float]) 
 
 
 def _has_predefined_attr(e:entity_instance) -> bool:
-    return hasattr(e, "PredefinedType")
+    if hasattr(e, "PredefinedType") or hasattr(e, "ShapeType"):
+        return True
+    for rel in getattr(e, "IsTypedBy", []) or []:
+        t = getattr(rel, "RelatingType", None)
+        if t and hasattr(t, "PredefinedType"):
+            return True
+    return False
 
 
 def _has_quantity_available(ad:CoreType, e:entity_instance, relevant_qto_types: set[str]) -> bool:

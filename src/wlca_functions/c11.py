@@ -37,14 +37,14 @@ def category_11(ad: CoreType, idx: PreIndex) -> CategoryReturn:
         scoped_elements.append(el)
 
         ifc_class = el.is_a()
-        pdt = getattr(el, "PredefinedType", None)
+        pdt = ad.predefined_type(el)
 
-        if (pdt is None) or (pdt == "NOTDEFINED"):
+        if pdt is None:
             issue = IssueRow()
             issue.category_code = "1.1"
             issue.category_name = ""
             issue.ifc_class = ifc_class
-            issue.message = "Missing predefined type"
+            issue.message = f"Missing predefined type ({ifc_class}.PredefinedType or assigned type PredefinedType)"
             out.issues.append(issue)
 
         # scoring L1-L3
