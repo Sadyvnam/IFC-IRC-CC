@@ -1,4 +1,4 @@
-# IFC Model Quality Analyzer
+# Exchanged Building Information Checker for Circularity & Carbon. IFC Model Quality Analyzer
 
 Diagnostic IFC exchange-readiness assessment for sustainability-oriented workflows.
 
