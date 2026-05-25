@@ -1,6 +1,7 @@
-# Exchanged Building Information Checker for Circularity & Carbon. IFC Model Quality Analyzer
+# Exchanged Building Information Checker for Circularity & Carbon.
 
 Diagnostic IFC exchange-readiness assessment for sustainability-oriented workflows.
+Prototype research implementation.
 
 This repository evaluates the extent exchanged IFC model contains usable information for:
 
@@ -11,7 +12,7 @@ Please find instructions to run the file at the bottom of this file.
 
 ## What This Tool Is
 
-- A rule-based checker for whether IFC exchange data is usable for the above purpose
+- A deterministic checker for whether IFC exchange data is usable
 - A category-based analyzer that groups elements into Building Element Categories (BECs) and evaluates their information readiness, which are from RICS 2.0 WLCA
 - A research-oriented diagnostic tool
 
@@ -103,8 +104,6 @@ These are not consistently present across exported IFC files, so absence is comm
 - Weak or generic material naming
 - Document links that exist but are unusable
 - Sparse explicit circularity or disassembly information
-
-These are expected modeling constraints, not edge cases.
 
 ## Output Philosophy
 
