@@ -1,7 +1,7 @@
 # Exchanged Building Information Checker for Circularity & Carbon.
 
 Diagnostic IFC exchange-readiness assessment for sustainability-oriented workflows.
-Prototype research implementation.
+For prototype research implementation, refer to "prototype" branch. The main branch has updated since.
 
 This repository evaluates the extent exchanged IFC model contains usable information for:
 
